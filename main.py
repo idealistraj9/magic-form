@@ -17,21 +17,43 @@ def get_file_paths():
 
 def authenticate():
     creds = None
-    credentials_path, token_path = get_file_paths()
     
+    # Get credentials from st.secrets
+    client_id = st.secrets["web"]["client_id"]
+    client_secret = st.secrets["web"]["client_secret"]
+
+    # Define the path to the token file
+    token_path = 'token.json'
+
+    # If token file exists, load credentials from it
     if os.path.exists(token_path):
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
     
+    # If creds are not valid, authenticate and refresh
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
+            # Use client_id and client_secret from st.secrets to authenticate
+            flow = InstalledAppFlow.from_client_config(
+                {
+                    "installed": {
+                        "client_id": client_id,
+                        "client_secret": client_secret,
+                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                        "token_uri": "https://accounts.google.com/o/oauth2/token",
+                        "redirect_uris": ["http://localhost:8080/"],
+                        "scopes": SCOPES,
+                    }
+                },
+                SCOPES
+            )
             creds = flow.run_local_server(port=8080)
-
+        
+        # Save the credentials to the token file
         with open(token_path, 'w') as token_file:
             token_file.write(creds.to_json())
-    
+
     return creds
 
 def load_questions_from_json(file_obj):
