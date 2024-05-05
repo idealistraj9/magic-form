@@ -1,0 +1,20 @@
+{
+  "questions": [
+    {
+      "title": "What is DevOps?",
+      "type": "RADIO",
+      "options": [
+        "A programming language",
+        "A set of practices that combines software development and IT operations",
+        "A type of database"
+      ],
+      "required": true
+    },
+    {
+      "title": "Which tool is commonly used for version control in DevOps?",
+      "type": "RADIO",
+      "options": ["Git", "Excel", "Java"],
+      "required": true
+    }
+  ]
+}
