@@ -48,7 +48,7 @@ def authenticate():
                 },
                 SCOPES
             )
-            creds = flow.run_local_server(port=8080)
+            creds = flow.run_local_server()
         
         # Save the credentials to the token file
         with open(token_path, 'w') as token_file:
