@@ -11,7 +11,7 @@ import pyperclip
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
 def get_file_paths():
-    credentials_path = "client_secret.json"
+    credentials_path = os.environ.get('CREDENTIALS_PATH', 'client_secret.json')
     token_path = os.path.join(os.path.dirname(credentials_path), 'token.json')
     return credentials_path, token_path
 
