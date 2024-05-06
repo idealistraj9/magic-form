@@ -35,24 +35,38 @@ def authenticate():
             creds.refresh(Request())
         else:
             # Use client_id and client_secret from st.secrets to authenticate
-            flow = InstalledAppFlow.from_client_config(
-                {
-                    "installed": {
-                        "client_id": client_id,
-                        "client_secret": client_secret,
-                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                        "token_uri": "https://accounts.google.com/o/oauth2/token",
-                        "redirect_uris": ["https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/"],
-                        "scopes": SCOPES,
-                    }
-                },
-                SCOPES
-            )
-            creds = flow.run_local_server()
-        
-        # Save the credentials to the token file
-        with open(token_path, 'w') as token_file:
-            token_file.write(creds.to_json())
+            flow = Flow.from_client_config(
+        {
+            "installed": {
+                "client_id": st.secrets["web"]["client_id"],
+                "client_secret": st.secrets["web"]["client_secret"],
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "redirect_uris": [f"{st.secrets['streamlit_url']}/oauth2callback"],
+                "scopes": SCOPES,
+            }
+        }
+    )
+    flow.redirect_uri = f"{st.secrets['streamlit_url']}/oauth2callback"
+
+    # Redirect user to authorization page
+    authorization_url, _ = flow.authorization_url()
+
+    # Show the authorization URL to the user
+    st.write(f"[Click here to authorize]({authorization_url})")
+
+    # Wait for user to authorize and be redirected back to the app
+    # You will need to set up a callback handler for this to work
+    code = st.text_input("Enter the authorization code:")
+    if code:
+        flow.fetch_token(code=code)
+
+    creds = flow.credentials
+
+    # Save the credentials to the token file
+    token_path = "token.json"
+    with open(token_path, 'w') as token_file:
+        token_file.write(creds.to_json())
 
     return creds
 
