@@ -44,17 +44,17 @@ def authenticate():
                         "client_secret": client_secret,
                         "auth_uri": st.secrets["web"]["auth_uri"],
                         "token_uri": st.secrets["web"]["token_uri"],
-                        "redirect_uris": ["https://idealistraj9-magic-form-main-nh0ojs.streamlit.app"],
+                        "redirect_uris": ["https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/"],
                         "scopes": SCOPES,
                     }
                 },
                 SCOPES
             )
-            flow.redirect_uri = "https://idealistraj9-magic-form-main-nh0ojs.streamlit.app"
+            flow.redirect_uri = "https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/"
 
             # Redirect user to authorization page
             authorization_url, _ = flow.authorization_url()
-
+            
             # Show the authorization URL to the user
             st.write(f"[Click here to authorize]({authorization_url})")
 
