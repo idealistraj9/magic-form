@@ -48,8 +48,9 @@ def authenticate():
                 "scopes": SCOPES,
             }
         }
+        SCOPES
     )
-    flow.redirect_uri = f"{st.secrets['streamlit_url']}/oauth2callback"
+    flow.redirect_uri = f"{s_url}/oauth2callback"
 
     # Redirect user to authorization page
     authorization_url, _ = flow.authorization_url()
