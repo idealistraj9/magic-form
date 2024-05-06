@@ -44,13 +44,13 @@ def authenticate():
                         "client_secret": client_secret,
                         "auth_uri": st.secrets["web"]["auth_uri"],
                         "token_uri": st.secrets["web"]["token_uri"],
-                        "redirect_uris": ["https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/"],
+                        "redirect_uris": ["https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/oauth2callback"],
                         "scopes": SCOPES,
                     }
                 },
                 SCOPES
             )
-    flow.redirect_uri = f"{s_url}/oauth2callback"
+    flow.redirect_uri = "https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/oauth2callback"
 
     # Redirect user to authorization page
     authorization_url, _ = flow.authorization_url()
