@@ -42,13 +42,13 @@ def authenticate():
                         "client_secret": client_secret,
                         "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                         "token_uri": "https://accounts.google.com/o/oauth2/token",
-                        "redirect_uris": ["http://localhost:8080/"],
+                        "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob:auto"],
                         "scopes": SCOPES,
                     }
                 },
                 SCOPES
             )
-            creds = flow.run_local_server()
+            creds = flow.run_local_server(open_browser=False)
         
         # Save the credentials to the token file
         with open(token_path, 'w') as token_file:
