@@ -61,8 +61,10 @@ def authenticate():
             # Get the authorization code from the URL
             code = st.experimental_get_query_params().get("code", None)
 
+            decoded_code = urllib.parse.unquote(code)
+            
             if code:
-                flow.fetch_token(code=code)
+                flow.fetch_token(code=decoded_code)
                 creds = flow.credentials
 
                 # Save the credentials to the token file
