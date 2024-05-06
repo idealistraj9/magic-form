@@ -15,6 +15,11 @@ def get_file_paths():
     token_path = os.path.join(os.path.dirname(credentials_path), 'token.json')
     return credentials_path, token_path
 
+def get_free_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(('', 0))
+        return s.getsockname()[1]
+    
 def authenticate():
     creds = None
     
@@ -48,7 +53,8 @@ def authenticate():
                 },
                 SCOPES
             )
-            creds = flow.run_local_server(open_browser=False)
+            available_port = get_free_port()
+            creds = flow.run_local_server(port=available_port)
         
         # Save the credentials to the token file
         with open(token_path, 'w') as token_file:
