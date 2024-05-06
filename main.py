@@ -18,7 +18,7 @@ def get_file_paths():
     
 def authenticate():
     creds = None
-    
+
     # Get credentials from st.secrets
     client_id = st.secrets["web"]["client_id"]
     client_secret = st.secrets["web"]["client_secret"]
@@ -30,7 +30,7 @@ def authenticate():
     # If token file exists, load credentials from it
     if os.path.exists(token_path):
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
-    
+
     # If creds are not valid, authenticate and refresh
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -50,26 +50,25 @@ def authenticate():
                 },
                 SCOPES
             )
-    flow.redirect_uri = "https://idealistraj9-magic-form-main-nh0ojs.streamlit.app"
+            flow.redirect_uri = "https://idealistraj9-magic-form-main-nh0ojs.streamlit.app"
 
-    # Redirect user to authorization page
-    authorization_url, _ = flow.authorization_url()
+            # Redirect user to authorization page
+            authorization_url, _ = flow.authorization_url()
 
-    # Show the authorization URL to the user
-    st.write(f"[Click here to authorize]({authorization_url})")
+            # Show the authorization URL to the user
+            st.write(f"[Click here to authorize]({authorization_url})")
 
-    # Wait for user to authorize and be redirected back to the app
-    # You will need to set up a callback handler for this to work
-    code = st.text_input("Enter the authorization code:")
-    if code:
-        flow.fetch_token(code=code)
+            # Get the authorization code from the URL
+            code = st.experimental_get_query_params().get("code", None)
 
-    creds = flow.credentials
+            if code:
+                flow.fetch_token(code=code)
+                creds = flow.credentials
 
-    # Save the credentials to the token file
-    token_path = "token.json"
-    with open(token_path, 'w') as token_file:
-        token_file.write(creds.to_json())
+                # Save the credentials to the token file
+                token_path = "token.json"
+                with open(token_path, 'w') as token_file:
+                    token_file.write(creds.to_json())
 
     return creds
 
