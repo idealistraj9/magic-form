@@ -61,18 +61,18 @@ def authenticate():
 
             # Get the authorization code from the URL
             code = st.experimental_get_query_params().get("code", None)
-
-            decoded_code = unquote(code)
-            
             if code:
+                decoded_code = unquote(code)
                 flow.fetch_token(code=decoded_code)
                 creds = flow.credentials
-
-                # Save the credentials to the token file
+            
                 token_path = "token.json"
                 with open(token_path, 'w') as token_file:
                     token_file.write(creds.to_json())
-
+                
+            else:
+                st.error("Authorization code not found in the URL.")
+                creds = None
     return creds
 
 def load_questions_from_json(file_obj):
