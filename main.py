@@ -37,19 +37,19 @@ def authenticate():
             creds.refresh(Request())
         else:
             # Use client_id and client_secret from st.secrets to authenticate
-            flow = Flow.from_client_config(
-        {
-            "installed": {
-                "client_id": st.secrets["web"]["client_id"],
-                "client_secret": st.secrets["web"]["client_secret"],
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [f"{s_url}/oauth2callback"],
-                "scopes": SCOPES,
-            }
-        }
-        SCOPES
-    )
+            flow = InstalledAppFlow.from_client_config(
+                {
+                    "installed": {
+                        "client_id": client_id,
+                        "client_secret": client_secret,
+                        "auth_uri": st.secrets["web"]["auth_uri"],
+                        "token_uri": st.secrets["web"]["token_uri"],
+                        "redirect_uris": ["https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/"],
+                        "scopes": SCOPES,
+                    }
+                },
+                SCOPES
+            )
     flow.redirect_uri = f"{s_url}/oauth2callback"
 
     # Redirect user to authorization page
