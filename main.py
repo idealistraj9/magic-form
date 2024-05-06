@@ -7,7 +7,7 @@ from google_auth_oauthlib.flow import Flow
 import json
 import os
 import pyperclip
-from urllib.parse import urlparse
+import urllib3 as urllib
 
 # Define the required scopes for Google Forms API
 SCOPES = ['https://www.googleapis.com/auth/drive']
