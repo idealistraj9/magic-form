@@ -7,7 +7,7 @@ from google_auth_oauthlib.flow import Flow
 import json
 import os
 import pyperclip
-import urllib3 as urllib
+from urllib.parse import unquote
 
 # Define the required scopes for Google Forms API
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -62,7 +62,7 @@ def authenticate():
             # Get the authorization code from the URL
             code = st.experimental_get_query_params().get("code", None)
 
-            decoded_code = urllib.parse.unquote(code)
+            decoded_code = unquote(code)
             
             if code:
                 flow.fetch_token(code=decoded_code)
