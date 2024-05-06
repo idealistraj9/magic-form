@@ -6,6 +6,7 @@ from googleapiclient.discovery import build
 import json
 import os
 import pyperclip
+import socket
 
 # Define the required scopes for Google Forms API
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -47,7 +48,7 @@ def authenticate():
                         "client_secret": client_secret,
                         "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                         "token_uri": "https://accounts.google.com/o/oauth2/token",
-                        "redirect_uris": ["urn:ietf:wg:oauth:2.0:oob:auto"],
+                        "redirect_uris": ["https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/"],
                         "scopes": SCOPES,
                     }
                 },
