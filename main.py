@@ -22,6 +22,7 @@ def authenticate():
     # Get credentials from st.secrets
     client_id = st.secrets["web"]["client_id"]
     client_secret = st.secrets["web"]["client_secret"]
+    s_url = st.secrets["web"]["streamlit_url"]
 
     # Define the path to the token file
     token_path = 'token.json'
@@ -43,7 +44,7 @@ def authenticate():
                 "client_secret": st.secrets["web"]["client_secret"],
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [f"{st.secrets['streamlit_url']}/oauth2callback"],
+                "redirect_uris": [f"{s_url}/oauth2callback"],
                 "scopes": SCOPES,
             }
         }
