@@ -45,7 +45,7 @@ def authenticate():
                         "client_secret": client_secret,
                         "auth_uri": st.secrets["web"]["auth_uri"],
                         "token_uri": st.secrets["web"]["token_uri"],
-                        "redirect_uris": 'https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/',
+                        "redirect_uris": 'https://idealistraj9-magic-form-main-nh0ojs.streamlit.app',
                         "scopes": SCOPES,
                     }
                 },
