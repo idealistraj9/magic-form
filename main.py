@@ -20,63 +20,42 @@ def get_file_paths():
 def authenticate():
     creds = None
     
-    # Get credentials from st.secrets
-    client_id = st.secrets["web"]["client_id"]
-    client_secret = st.secrets["web"]["client_secret"]
-    s_url = st.secrets["web"]["streamlit_url"]
-
-    # Define the path to the token file
+    # Paths
     token_path = 'token.json'
-
-    # If token file exists, load credentials from it
+    
+    # Check if token file exists
     if os.path.exists(token_path):
-        creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+        try:
+            creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+        except ValueError as e:
+            st.error(f"Error loading credentials: {str(e)}")
+            os.remove(token_path)  # Remove the invalid token file
+            creds = None
 
-    # If creds are not valid, authenticate and refresh
+    # If creds are not valid or don't exist
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            # Use client_id and client_secret from st.secrets to authenticate
-            flow = InstalledAppFlow.from_client_config(
-                {
-                    "installed": {
-                        "client_id": client_id,
-                        "client_secret": client_secret,
-                        "auth_uri": st.secrets["web"]["auth_uri"],
-                        "token_uri": st.secrets["web"]["token_uri"],
-                        "redirect_uris": 'https://idealistraj9-magic-form-main-nh0ojs.streamlit.app',
-                        "scopes": SCOPES,
-                    }
-                },
-                SCOPES
-            )
-            flow.redirect_uri = 'https://idealistraj9-magic-form-main-nh0ojs.streamlit.app'
+            # Start the authentication flow
+            flow = InstalledAppFlow.from_client_secrets_file(
+                'client_secret.json', SCOPES)
+            flow.redirect_uri = st.secrets["web"]["streamlit_url"]
 
-            # Redirect user to authorization page
             authorization_url, _ = flow.authorization_url()
-            
-            # Show the authorization URL to the user
             st.write(f"[Click here to authorize]({authorization_url})")
 
-            # Wait for the user to authorize and be redirected back to the app
-            # Get the code parameter from the URL
-            query_params = st.experimental_get_query_params()
-            code = query_params.get("code")
-            
+            # Wait for user to authorize and be redirected
+            code = st.experimental_get_query_params().get("code", None)
             if code:
-                code = code[0]  # Get the first value in the list, as it is stored in a list
                 flow.fetch_token(code=code)
                 creds = flow.credentials
                 
-                # Save the credentials to the token file
+                # Save credentials
                 with open(token_path, 'w') as token_file:
                     token_file.write(creds.to_json())
-            else:
-                st.error("Authorization code not found in the URL.")
-                creds = None
-    return creds
 
+    return creds
 
 def load_questions_from_json(file_obj):
     data = json.load(file_obj)
