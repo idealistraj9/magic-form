@@ -7,7 +7,7 @@ from google_auth_oauthlib.flow import Flow
 import json
 import os
 import pyperclip
-from urllib.parse import unquote
+import urllib3
 
 # Define the required scopes for Google Forms API
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -19,7 +19,7 @@ def get_file_paths():
     
 def authenticate():
     creds = None
-
+    
     # Get credentials from st.secrets
     client_id = st.secrets["web"]["client_id"]
     client_secret = st.secrets["web"]["client_secret"]
@@ -45,13 +45,13 @@ def authenticate():
                         "client_secret": client_secret,
                         "auth_uri": st.secrets["web"]["auth_uri"],
                         "token_uri": st.secrets["web"]["token_uri"],
-                        "redirect_uris": ["https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/"],
+                        "redirect_uris": [s_url],
                         "scopes": SCOPES,
                     }
                 },
                 SCOPES
             )
-            flow.redirect_uri = "https://idealistraj9-magic-form-main-nh0ojs.streamlit.app/"
+            flow.redirect_uri = s_url
 
             # Redirect user to authorization page
             authorization_url, _ = flow.authorization_url()
@@ -59,21 +59,23 @@ def authenticate():
             # Show the authorization URL to the user
             st.write(f"[Click here to authorize]({authorization_url})")
 
-            # Get the authorization code from the URL
-            code = st.experimental_get_query_params().get("code", None)
-            if code:
-                decoded_code = unquote(code)
-                flow.fetch_token(code=decoded_code)
-                creds = flow.credentials
+            # Wait for user to authorize and be redirected back to the app
+            # Parse the redirect URL and extract the code parameter
+            parsed_url = urllib3.util.parse_url(st.experimental_get_query_params().get("code", None))
+            code = parsed_url.query.get("code")
             
-                token_path = "token.json"
+            if code:
+                flow.fetch_token(code=code)
+                creds = flow.credentials
+                
+                # Save the credentials to the token file
                 with open(token_path, 'w') as token_file:
                     token_file.write(creds.to_json())
-                
             else:
                 st.error("Authorization code not found in the URL.")
                 creds = None
     return creds
+
 
 def load_questions_from_json(file_obj):
     data = json.load(file_obj)
