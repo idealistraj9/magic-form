@@ -59,12 +59,13 @@ def authenticate():
             # Show the authorization URL to the user
             st.write(f"[Click here to authorize]({authorization_url})")
 
-            # Wait for user to authorize and be redirected back to the app
-            # Parse the redirect URL and extract the code parameter
-            parsed_url = urllib3.util.parse_url(st.experimental_get_query_params().get("code", None))
-            code = parsed_url.query.get("code")
+            # Wait for the user to authorize and be redirected back to the app
+            # Get the code parameter from the URL
+            query_params = st.experimental_get_query_params()
+            code = query_params.get("code")
             
             if code:
+                code = code[0]  # Get the first value in the list, as it is stored in a list
                 flow.fetch_token(code=code)
                 creds = flow.credentials
                 
